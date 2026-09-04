@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>骑马环游世界 - 治愈壁纸</title>
+  <!--
+    CSS内联：避免file://协议下外部CSS加载失败的问题
+    （浏览器对file://加载本地资源有时会返回错误的MIME type）
+  -->
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{
+      width:100%;height:100%;min-height:100vh;
+      overflow:hidden;background:#1a1a2e;
+    }
+    #wallpaper{
+      display:block;position:fixed;top:0;left:0;
+      width:100vw;height:100vh;
+    }
+    #debug-info{
+      position:fixed;bottom:16px;left:16px;
+      padding:8px 14px;background:rgba(0,0,0,0.55);
+      color:#ccc;font-family:'Courier New',monospace;
+      font-size:12px;border-radius:6px;
+      pointer-events:none;z-index:10;line-height:1.6;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="wallpaper"></canvas>
+  <div id="debug-info">加载中...</div>
+
+  <!--
+    经典脚本模式：直接双击本文件（file://）即可运行，无需任何后台服务器。
+    加载顺序很重要：被依赖的文件必须排在前面。
+    ?v=40 缓存破坏参数：确保浏览器始终加载最新版本（修改代码后递增此值）
+
+    v38 变更：新增 **飞鸟装饰系统**（`js/render/BirdsRenderer.js`）。
+      - 定位：天空「活物装饰」，与云/石/植物同家族，让场景更生动一点点（非复杂生态）。
+      - 海鸥式 M 形剪影 + 双翼扇动；偶发生成（单只/松散V字/横列小群）。
+      - 隐藏规则：恶劣天气(雨/雪/沙暴)+重阴(overcast≥0.75)+深夜(nightIntensity>0.7) 必须隐藏。
+      - 频率综合控制：同屏硬上限 6 只；生成间隔受「云量拥挤度 × 场景亲密度」调制（云越多/越不亲鸟→越稀）；
+        全局 visibility 逐帧 lerp 平滑淡入淡出（呼应阴晴连续化，不硬切）。
+      - 接入：Engine 把 dayNight.getTimeData() 传给 weather.update；WeatherSystem.update 调 updateBirdField；
+        main.js midground 在 renderClouds 之后注册 renderBirds。
+    v37 变更：
+      - CloudRenderer v4：彻底去掉圆形 arc() 堆积（肥皂泡感根源），
+        改用 bezierCurveTo/quadraticCurveTo 勾勒每朵云的不规则有机轮廓
+        （平底+多隆起蓬松顶部），多层前后参差保留。卷云改为正弦波动的贝塞尔丝带。
+    v36 变更：
+      - CloudRenderer 重写为「实色多层堆叠」：去掉径向渐变光晕（晃眼根源），
+        改半透明实色圆前后参差堆叠，靠透明度叠加出体积；大片云层更厚。
+      - 阴晴切换连续化：去掉 overcast 硬阈值切断日月；日月星辰随 overcast 连续
+        变淡，并在其「之后」叠一层中层阴晴幕（半透明，保留太阳光斑）。
+    v35 变更：天气系统拆分为独立子模块（Cloud/Rain/Snow/Sandstorm/Fog Renderer）
+  -->
+  <script src="js/core/Engine.js?v=40"></script>
+  <script src="js/core/Renderer.js?v=40"></script>
+  <script src="js/core/Parallax.js?v=40"></script>
+  <script src="js/core/LightSystem.js?v=40"></script>
+  <script src="js/scenes/SceneDefs.js?v=40"></script>
+  <script src="js/scenes/SceneManager.js?v=40"></script>
+  <script src="js/cycle/DayNight.js?v=40"></script>
+  <script src="js/weather/WeatherSystem.js?v=40"></script>
+  <script src="js/entities/Cowboy.js?v=40"></script>
+
+  <!-- 工具层：颜色与渐变（含 NaN 保护）必须在各渲染模块之前加载 -->
+  <script src="js/utils/ColorUtils.js?v=40"></script>
+  <!-- 渲染层：天空 / 地形 / 前景物体 -->
+  <script src="js/render/SkyRenderer.js?v=40"></script>
+  <script src="js/render/TerrainRenderer.js?v=40"></script>
+  <script src="js/render/ForegroundObjects.js?v=40"></script>
+  <script src="js/render/BirdsRenderer.js?v=40"></script>
+
+  <!-- 天气子模块（WeatherRenderer 调度层先加载桩函数，CloudRenderer 后覆盖 renderClouds） -->
+  <script src="js/weather/WeatherRenderer.js?v=40"></script>
+  <script src="js/weather/clouds/CloudRenderer.js?v=40"></script>
+  <script src="js/weather/precipitation/RainRenderer.js?v=40"></script>
+  <script src="js/weather/precipitation/SnowRenderer.js?v=40"></script>
+  <script src="js/weather/precipitation/SandstormRenderer.js?v=40"></script>
+  <script src="js/weather/precipitation/FogRenderer.js?v=40"></script>
+
+  <script src="js/main.js?v=40"></script>
+</body>
+</html>

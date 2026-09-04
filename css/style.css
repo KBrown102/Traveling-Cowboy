@@ -1,0 +1,40 @@
+/* 全屏Canvas壁纸样式 - 修复全屏显示问题 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;        /* 确保至少占满视口 */
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+/* Canvas必须绝对定位填满整个视口 */
+#wallpaper {
+  display: block;
+  position: fixed;          /* 用fixed而非static，确保脱离文档流并覆盖全屏 */
+  top: 0;
+  left:  0;
+  width: 100vw;            /* 视口单位 */
+  height: 100vh;
+}
+
+/* 调试信息面板 */
+#debug-info {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ccc;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 10;
+  line-height: 1.6;
+}
