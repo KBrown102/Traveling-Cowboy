@@ -20,7 +20,6 @@
 1. Clone 项目到本地
 ```bash
 git clone https://github.com/KBrown102/Traveling-Cowboy.git
-```
 
 2. 项目根目录打开 `index.html` 即可开始游戏。
 
